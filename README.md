@@ -6,6 +6,10 @@ minimal-sized container for a Dart application.
 The image includes a root certificate authority bundle for TLS (needed
 for making HTTPS requests).
 
+There are examples under the `examples` directory if you are interested in
+comparing the time until a server app is listening in a container using either
+the Dart VM or the `dart2native` AOT compiler.
+
 ## Dart AOT
 
 If you want the fastest possible application launch and you don't require
