@@ -1,0 +1,73 @@
+## dart-scratch
+
+All the runtime dependencies needed to add to the `scratch` image to run a
+minimal-sized container for a Dart application.
+
+The image includes a root certificate authority bundle for TLS (needed
+for making HTTPS requests).
+
+## Dart AOT
+
+If you want the fastest possible application launch and you don't require
+Dart reflection (for annotation support, for example), then use
+`dart-scratch` as shown below in this section using
+[dart2native](https://dart.dev/tools/dart2native).
+
+A minimal server app image will be around 25 MB and when a container is
+created the app will launch in sub-second time. This is well-suited for
+Function-as-a-Service and other types of jobs which need to execute and
+scale quickly. 
+
+```dockerfile
+FROM google/dart
+# uncomment the following if you want to ensure latest Dart and root CA bundle
+#RUN apt -y update && apt -y upgrade
+WORKDIR /app
+COPY pubspec.* .
+RUN pub get
+COPY . .
+RUN pub get --offline
+RUN dart2native /app/bin/server.dart -o /app/bin/server
+
+FROM subfuzion/dart-scratch
+COPY --from=0 /app/bin/server /app/bin/server
+# COPY any other directories or files you may require at runtime, ex:
+#COPY --from=0 /app/static/ /app/static/
+EXPOSE 8080
+ENTRYPOINT ["/app/bin/server"]
+```
+
+## Dart VM
+
+If your app depends on `dart:mirrors`, then you can't use `dart2native`
+(see [limitations](https://dart.dev/tools/dart2native#known-limitations),
+so use `dart-scratch` as shown below.
+
+A minimal server app image will be around 50 MB and when a container is
+created the app can take a number of seconds before it's ready to listen
+on a socket. Due to the increased start time this is better suited for
+longer-lived app, apps that are less sensitive to job launch time, or
+applications that require reflection support (for annotations, for example).
+
+```dockerfile
+FROM google/dart
+# uncomment the following if you want to ensure latest Dart and root CA bundle
+#RUN apt -y update && apt -y upgrade
+WORKDIR /app
+COPY pubspec.* .
+RUN pub get
+COPY . .
+RUN pub get --offline
+
+FROM subfuzion/dart-scratch
+COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
+COPY --from=0 /root/.pub-cache /root/.pub-cache
+# Copy over the entire app...
+COPY --from=0 /app /app
+# ...or copy specific files and directories you require at runtime, ex:
+#COPY --from=0 /app/bin/server.dart /app/bin/server.dart
+#COPY --from=0 /app/lib/ /app/lib/
+#COPY --from=0 /app/static/ /app/static/
+EXPOSE 8080
+ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dart"]
+```
