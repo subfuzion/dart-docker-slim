@@ -10,11 +10,17 @@ There are examples under the `examples` directory if you are interested in
 comparing the time until a server app is listening in a container using either
 the Dart VM or the `dart2native` AOT compiler.
 
+> NOTE: I have only done a limited amount of testing. I'm working 
+> on a [buildpack](https://buildpacks.io/) to support launching in Cloud 
+> functions/serverless environments, so feedback is appreciated if you run
+> into any [issues](https://github.com/subfuzion/dart-scratch/issues) building
+> or running your Dart app with `dart-scratch`.
+
 ## Dart AOT
 
 If you want the fastest possible application launch and you don't require
 Dart reflection (for annotation support, for example), then use
-`dart-scratch` as shown below in this section using
+`dart-scratch` as shown below. This will build your app using
 [dart2native](https://dart.dev/tools/dart2native).
 
 A minimal server app image will be around 25 MB and when a container is
@@ -44,7 +50,7 @@ ENTRYPOINT ["/app/bin/server"]
 ## Dart VM
 
 If your app depends on `dart:mirrors`, then you can't use `dart2native`
-(see [limitations](https://dart.dev/tools/dart2native#known-limitations),
+(see [limitations](https://dart.dev/tools/dart2native#known-limitations)),
 so use `dart-scratch` as shown below.
 
 A minimal server app image will be around 50 MB and when a container is
