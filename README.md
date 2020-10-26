@@ -16,6 +16,10 @@ the Dart VM or the `dart2native` AOT compiler.
 > into any [issues](https://github.com/subfuzion/dart-scratch/issues) building
 > or running your Dart app with `dart-scratch`.
 
+I published a [blog post](https://medium.com/google-cloud/build-slim-docker-images-for-dart-apps-ee98ea1d1cf7)
+that goes into more detail about the rationale for `dart-scratch` and why size 
+matters.
+
 ## Dart AOT
 
 If you want the fastest possible application launch and you don't require
