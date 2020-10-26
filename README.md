@@ -24,8 +24,12 @@ matters.
 
 If you want the fastest possible application launch and you don't require
 Dart reflection (for annotation support, for example), then use
-`dart-scratch` as shown below. This will build your app using
-[dart2native](https://dart.dev/tools/dart2native).
+`dart-scratch` as shown below. This will build your app ahead-of-time (AOT) 
+using [dart2native](https://dart.dev/tools/dart2native).
+
+Apps that are AOT-compiled start up very fast, exhibit consistent runtime
+performance, and don't suffer latency during early runs during a "warm-up"
+period the way just-in-time (JIT) compiled code does (see next section).
 
 A minimal server app image will be around 25 MB and when a container is
 created the app will launch in sub-second time. This is well-suited for
@@ -54,14 +58,29 @@ ENTRYPOINT ["/app/bin/server"]
 ## Dart VM
 
 If your app depends on `dart:mirrors`, then you can't use `dart2native`
-(see [limitations](https://dart.dev/tools/dart2native#known-limitations)),
-so use `dart-scratch` as shown below.
+(see [limitations](https://dart.dev/tools/dart2native#known-limitations)) to
+compile the app.
 
-A minimal server app image will be around 50 MB and when a container is
-created the app can take a number of seconds before it's ready to listen
-on a socket. Due to the increased start time this is better suited for
-longer-lived app, apps that are less sensitive to job launch time, or
-applications that require reflection support (for annotations, for example).
+The only option if you need reflection is to use the just-in-time (JIT)
+compiler. However, instead of waiting to compile the app the first time it
+is run under the Dart VM, it is possible to create a JIT-compiled snapshot
+instead, as shown below. This can be loaded by the Dart VM very quickly, just
+like the AOT version.
+
+There are a couple of notable differences from AOT-compiled code. JIT-compiled 
+code has a warm-up time as the code is optimized dynamically. The advantage is
+that JIT-compiled code has the potential to run faster than AOT-compiled
+code. This is only really beneficial, however, in a long-running containers.
+Containers that perform their tasks quickly and die, and containers that
+scale up dynamically in response to loads, may not run long enough to 
+benefit from this type of optimization.
+
+Therefore, the main two reasons for using the Dart VM with JIT-compiled
+code is if you are creating long-running apps or if you require `dart:mirrors`
+support.
+
+A minimal server app image will be close to 50 MB although it should be 
+ready in sub-second time to be ready to listen on a socket. 
 
 ```dockerfile
 FROM google/dart
@@ -72,18 +91,15 @@ COPY pubspec.* .
 RUN pub get
 COPY . .
 RUN pub get --offline
+RUN dart --snapshot=bin/server.snapshot bin/server.dart
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
-COPY --from=0 /root/.pub-cache /root/.pub-cache
-# Copy over the entire app...
-COPY --from=0 /app /app
-# ...or copy specific files and directories you require at runtime, ex:
-#COPY --from=0 /app/bin/server.dart /app/bin/server.dart
-#COPY --from=0 /app/lib/ /app/lib/
+COPY --from=0 /app/bin/server.snapshot /app/bin/server.snapshot
+# COPY any other directories or files you may require at runtime, ex:
 #COPY --from=0 /app/static/ /app/static/
 EXPOSE 8080
-ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dart"]
+ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.snapshot"]
 ```
 
 ---
