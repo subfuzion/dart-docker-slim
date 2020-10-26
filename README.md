@@ -81,3 +81,6 @@ COPY --from=0 /app /app
 EXPOSE 8080
 ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dart"]
 ```
+
+---
+This is not an official Google project.
