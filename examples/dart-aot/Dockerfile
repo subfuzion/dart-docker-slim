@@ -3,8 +3,8 @@ WORKDIR /app
 COPY pubspec.* .
 RUN pub get
 COPY . .
-RUN pub get --offline
-RUN dart2native /app/bin/server.dart -o /app/bin/server
+RUN dart pub get --offline
+RUN dart compile exe /app/bin/server.dart -o /app/bin/server
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /app/bin/server /app/bin/server

@@ -3,11 +3,11 @@ WORKDIR /app
 COPY pubspec.* .
 RUN pub get
 COPY . .
-RUN pub get --offline
-RUN dart --snapshot=bin/server.snapshot bin/server.dart
+RUN dart pub get --offline
+RUN dart compile kernel -o bin/server.dill bin/server.dart
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
-COPY --from=0 /app/bin/server.snapshot /app/bin/server.snapshot
+COPY --from=0 /app/bin/server.dill /app/bin/server.dill
 EXPOSE 8080
-ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.snapshot"]
+ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dill"]
