@@ -92,15 +92,15 @@ COPY pubspec.* .
 RUN dart pub get
 COPY . .
 RUN dart pub get --offline
-RUN dart compile kernel -o bin/server.snapshot bin/server.dart
+RUN dart compile kernel -o bin/server.dill bin/server.dart
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
-COPY --from=0 /app/bin/server.snapshot /app/bin/server.snapshot
+COPY --from=0 /app/bin/server.dill /app/bin/server.dill
 # COPY any other directories or files you may require at runtime, ex:
 #COPY --from=0 /app/static/ /app/static/
 EXPOSE 8080
-ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.snapshot"]
+ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dill"]
 ```
 
 ---
