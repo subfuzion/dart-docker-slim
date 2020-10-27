@@ -8,7 +8,7 @@ for making HTTPS requests).
 
 There are examples under the `examples` directory if you are interested in
 comparing the time until a server app is listening in a container using either
-the Dart VM or the `dart2native` AOT compiler.
+the Dart VM or the Dart AOT compiler.
 
 > NOTE: I have only done a limited amount of testing. I'm working 
 > on a [buildpack](https://buildpacks.io/) to support launching in Cloud 
@@ -24,8 +24,9 @@ matters.
 
 If you want the fastest possible application launch and you don't require
 Dart reflection (for annotation support, for example), then use
-`dart-scratch` as shown below. This will build your app ahead-of-time (AOT) 
-using [dart2native](https://dart.dev/tools/dart2native).
+`dart-scratch` as shown below. This will build your app using
+[`dart compile`](https://dart.dev/tools/dart-tool) ahead-of-time (AOT)
+compilation.
 
 Apps that are AOT-compiled start up very fast, exhibit consistent runtime
 performance, and don't suffer latency during early runs during a "warm-up"
@@ -42,10 +43,10 @@ FROM google/dart
 #RUN apt -y update && apt -y upgrade
 WORKDIR /app
 COPY pubspec.* .
-RUN pub get
+RUN dart pub get
 COPY . .
-RUN pub get --offline
-RUN dart2native /app/bin/server.dart -o /app/bin/server
+RUN dart pub get --offline
+RUN dart compile exe /app/bin/server.dart -o /app/bin/server
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /app/bin/server /app/bin/server
@@ -57,9 +58,9 @@ ENTRYPOINT ["/app/bin/server"]
 
 ## Dart VM
 
-If your app depends on `dart:mirrors`, then you can't use `dart2native`
-(see [limitations](https://dart.dev/tools/dart2native#known-limitations)) to
-compile the app.
+If your app depends on `dart:mirrors`, then you can't use AOT compilation (see
+[Native platform libraries](https://dart.dev/guides/libraries#native-platform-libraries))
+to compile the app.
 
 The only option if you need reflection is to use the just-in-time (JIT)
 compiler. However, instead of waiting to compile the app the first time it
@@ -88,10 +89,10 @@ FROM google/dart
 #RUN apt -y update && apt -y upgrade
 WORKDIR /app
 COPY pubspec.* .
-RUN pub get
+RUN dart pub get
 COPY . .
-RUN pub get --offline
-RUN dart --snapshot=bin/server.snapshot bin/server.dart
+RUN dart pub get --offline
+RUN dart compile kernel -o bin/server.snapshot bin/server.dart
 
 FROM subfuzion/dart-scratch
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
