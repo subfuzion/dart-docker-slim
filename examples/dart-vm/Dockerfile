@@ -1,7 +1,7 @@
 FROM google/dart
 WORKDIR /app
 COPY pubspec.* .
-RUN pub get
+RUN dart pub get
 COPY . .
 RUN dart pub get --offline
 RUN dart compile kernel -o bin/server.dill bin/server.dart
