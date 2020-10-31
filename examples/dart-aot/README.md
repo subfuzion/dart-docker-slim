@@ -10,10 +10,10 @@ docker build -t server-aot .
 ### Time how long it takes to lauch a server
 
 ```shell
-time docker run -it -p 8080:8080 --name server-aot-test server-aot
+time docker run -it -p 8080:8080 --name server-aot-test server-aot --quit
 ```
 
-Line 30 of `bin/server.dart` causes the server to exit as soon
+The `quit` flag causes the server to exit as soon
 as it is ready to listen for requests.
 
 ### Remove the container

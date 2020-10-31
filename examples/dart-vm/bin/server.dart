@@ -7,11 +7,17 @@ import 'package:shelf/shelf_io.dart' as io;
 const _hostname = '0.0.0.0';
 
 void main(List<String> args) async {
-  var parser = ArgParser()..addOption('port', abbr: 'p');
+  var watch = Stopwatch()..start();
+  print('Starting server');
+
+  var parser = ArgParser()
+    ..addFlag('quit', defaultsTo: false, negatable: false);
   var result = parser.parse(args);
 
-  var portStr = result['port'] ?? Platform.environment['PORT'] ?? '8080';
+  var portStr = Platform.environment['PORT'] ?? '8080';
   var port = int.tryParse(portStr);
+
+  var quit = result['quit'] ?? false;
 
   if (port == null) {
     stdout.writeln('Could not parse port value "$portStr" into a number.');
@@ -20,16 +26,28 @@ void main(List<String> args) async {
   }
 
   var handler = const shelf.Pipeline()
-      .addMiddleware(shelf.logRequests())
       .addHandler(_echoRequest);
+
+  handleSignals();
 
   var server = await io.serve(handler, _hostname, port);
   print('Serving at http://${server.address.host}:${server.port}');
 
-  // exit immediately for server launch timing test
-  exit(0);
+  if (quit) {
+    // exit immediately for server launch timing test if --quit option set
+    print('time elapsed: ${watch.elapsedMilliseconds}');
+    exit(0);
+  }
 }
 
 shelf.Response _echoRequest(shelf.Request request) =>
     shelf.Response.ok('Request for "${request.url}"');
 
+void handleSignals() {
+  ProcessSignal.sigint.watch().listen((signal) {
+    exit(0);
+  });
+  ProcessSignal.sigterm.watch().listen((signal) {
+    exit(0);
+  });
+}

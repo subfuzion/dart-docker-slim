@@ -1,10 +1,11 @@
-## dart-scratch
+## subfuzion/dart:slim
 
 All the runtime dependencies needed to add to the `scratch` image to run a
 minimal-sized container for a Dart application.
 
-The image includes a root certificate authority bundle for TLS (needed
-for making HTTPS requests).
+The image includes
+* a root certificate authority bundle for TLS (needed for making HTTPS requests)
+* name service / dns support for making HTTP client requests to external hosts
 
 There are examples under the `examples` directory if you are interested in
 comparing the time until a server app is listening in a container using either
@@ -13,18 +14,18 @@ the Dart VM or the Dart AOT compiler.
 > NOTE: I have only done a limited amount of testing. I'm working 
 > on a [buildpack](https://buildpacks.io/) to support launching in Cloud 
 > functions/serverless environments, so feedback is appreciated if you run
-> into any [issues](https://github.com/subfuzion/dart-scratch/issues) building
-> or running your Dart app with `dart-scratch`.
+> into any [issues](https://github.com/subfuzion/dart-docker-slim/issues) 
+> building or running your Dart app with `subfuzion/dart:slim`.
 
 I published a [blog post](https://medium.com/google-cloud/build-slim-docker-images-for-dart-apps-ee98ea1d1cf7)
-that goes into more detail about the rationale for `dart-scratch` and why size 
-matters.
+that goes into more detail about the rationale for `subfuzion/dart:slim`
+(originally called `dart-scratch`) and why size matters.
 
 ## Dart AOT
 
 If you want the fastest possible application launch and you don't require
 Dart reflection (for annotation support, for example), then use
-`dart-scratch` as shown below. This will build your app using
+`subfuzion/dart:slim` as shown below. This will build your app using
 [`dart compile`](https://dart.dev/tools/dart-tool) ahead-of-time (AOT)
 compilation.
 
@@ -42,13 +43,13 @@ FROM google/dart
 # uncomment the following if you want to ensure latest Dart and root CA bundle
 #RUN apt -y update && apt -y upgrade
 WORKDIR /app
-COPY pubspec.* .
+COPY pubspec.yaml .
 RUN dart pub get
 COPY . .
 RUN dart pub get --offline
 RUN dart compile exe /app/bin/server.dart -o /app/bin/server
 
-FROM subfuzion/dart-scratch
+FROM subfuzion/dart:slim
 COPY --from=0 /app/bin/server /app/bin/server
 # COPY any other directories or files you may require at runtime, ex:
 #COPY --from=0 /app/static/ /app/static/
@@ -88,13 +89,13 @@ FROM google/dart
 # uncomment the following if you want to ensure latest Dart and root CA bundle
 #RUN apt -y update && apt -y upgrade
 WORKDIR /app
-COPY pubspec.* .
+COPY pubspec.yaml .
 RUN dart pub get
 COPY . .
 RUN dart pub get --offline
 RUN dart compile kernel -o bin/server.dill bin/server.dart
 
-FROM subfuzion/dart-scratch
+FROM subfuzion/dart:slim
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
 COPY --from=0 /app/bin/server.dill /app/bin/server.dill
 # COPY any other directories or files you may require at runtime, ex:
