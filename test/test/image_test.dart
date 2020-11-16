@@ -33,6 +33,5 @@ void main() {
       var resp = await http.read(url);
       expect(resp, equals('ok'));
     });
-
   });
 }

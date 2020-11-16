@@ -15,7 +15,8 @@ void main(List<String> args) async {
   var port = int.tryParse(portStr);
 
   if (port == null) {
-    stdout.writeln('Could not parse environment variable for port "$portStr" into a number.');
+    stdout.writeln(
+        'Could not parse environment variable for port "$portStr" into a number.');
     exitCode = 1;
     return;
   }

@@ -25,8 +25,7 @@ void main(List<String> args) async {
     return;
   }
 
-  var handler = const shelf.Pipeline()
-      .addHandler(_echoRequest);
+  var handler = const shelf.Pipeline().addHandler(_echoRequest);
 
   handleSignals();
 

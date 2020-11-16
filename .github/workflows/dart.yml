@@ -1,0 +1,97 @@
+# Created with package:mono_repo v3.1.0-beta.2-dev
+name: Dart CI
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  job_001:
+    name: "OS: linux; SDK: dev; PKG: examples/dart-aot; TASKS: `dartanalyzer .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: examples/dart-aot
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartanalyzer
+  job_002:
+    name: "OS: linux; SDK: dev; PKG: examples/dart-vm; TASKS: `dartanalyzer .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: examples/dart-vm
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartanalyzer
+  job_003:
+    name: "OS: linux; SDK: dev; PKG: test; TASKS: `dartanalyzer .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: test
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartanalyzer
+  job_004:
+    name: "OS: linux; SDK: dev; PKG: examples/dart-aot; TASKS: `dartfmt -n --set-exit-if-changed .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: examples/dart-aot
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartfmt
+  job_005:
+    name: "OS: linux; SDK: dev; PKG: examples/dart-vm; TASKS: `dartfmt -n --set-exit-if-changed .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: examples/dart-vm
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartfmt
+  job_006:
+    name: "OS: linux; SDK: dev; PKG: test; TASKS: `dartfmt -n --set-exit-if-changed .`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: test
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh dartfmt
+  job_007:
+    name: "OS: linux; SDK: dev; PKG: test; TASKS: `pub run test`"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: cedx/setup-dart@v2
+        with:
+          release-channel: dev
+      - uses: actions/checkout@v2
+      - env:
+          PKGS: test
+          TRAVIS_OS_NAME: linux
+        run: tool/ci.sh test

@@ -5,5 +5,7 @@ stages:
   - analyze:
     - dartanalyzer
     - dartfmt
-  - unit_test:
-    - test
+# For test, need to run ./dartslim_test.sh (must be able to run docker)
+#  - unit_test:
+#    - test
+

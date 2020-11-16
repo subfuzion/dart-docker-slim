@@ -11,7 +11,7 @@ void main(List<String> args) async {
   print('Starting server');
 
   var parser = ArgParser()
-      ..addFlag('quit', defaultsTo: false, negatable: false);
+    ..addFlag('quit', defaultsTo: false, negatable: false);
   var result = parser.parse(args);
 
   var portStr = Platform.environment['PORT'] ?? '8080';
@@ -25,8 +25,7 @@ void main(List<String> args) async {
     return;
   }
 
-  var handler = const shelf.Pipeline()
-      .addHandler(_echoRequest);
+  var handler = const shelf.Pipeline().addHandler(_echoRequest);
 
   handleSignals();
 
