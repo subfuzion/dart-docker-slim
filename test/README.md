@@ -1,4 +1,11 @@
-To run tests locally:
+# Testing
+
+## Prerequisites
+
+* [Docker](https://www.docker.com/products/docker-desktop)
+* [Dart](https://dart.dev/get-dart#install)
+
+## Run the test script
 
 ```shell
 $ cd test
@@ -14,3 +21,4 @@ queries work for sending requests to a remote host).
 
 All local artifacts (image,
 container) are deleted on test script exit.
+

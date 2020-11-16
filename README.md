@@ -1,25 +1,24 @@
 ## subfuzion/dart:slim
 
-All the runtime dependencies needed to add to the `scratch` image to run a
-minimal-sized container for a Dart application.
-
 The image includes
-* a root certificate authority bundle for TLS (needed for making HTTPS requests)
-* name service / dns support for making HTTP client requests to external hosts
+* Core system runtime dependencies added to the
+  [scratch](https://hub.docker.com/_/scratch) image necessary for minimal-
+  sized containers for Dart applications, including servers
+* A root certificate authority bundle for TLS (needed for making HTTPS requests)
+* Name service / DNS support for making HTTP client requests to external hosts
 
-There are examples under the `examples` directory if you are interested in
-comparing the time until a server app is listening in a container using either
-the Dart VM or the Dart AOT compiler.
+The repo includes tests as well as examples of containerized server apps using
+`subfuzion/dart:slim`. You can build and run the examples to see how small a
+basic server image is and to time how long it takes to launch a container
+until the server app is running and listening for HTTP requests, comparing
+the both the Dart VM or the Dart AOT compiler.
 
-> NOTE: I have only done a limited amount of testing. I'm working 
-> on a [buildpack](https://buildpacks.io/) to support launching in Cloud 
-> functions/serverless environments, so feedback is appreciated if you run
-> into any [issues](https://github.com/subfuzion/dart-docker-slim/issues) 
-> building or running your Dart app with `subfuzion/dart:slim`.
-
-I published a [blog post](https://medium.com/google-cloud/build-slim-docker-images-for-dart-apps-ee98ea1d1cf7)
+Basic details for using the image for Dart AOT- and JIT-compiled apps are
+covered below. I published a
+[blog post](https://medium.com/google-cloud/build-slim-docker-images-for-dart-apps-ee98ea1d1cf7)
 that goes into more detail about the rationale for `subfuzion/dart:slim`
-(originally called `dart-scratch`) and why size matters.
+(formerly called `dart-scratch`) and why size matters for images, especially
+for modern microservice / serverless apps.
 
 ## Dart AOT
 
