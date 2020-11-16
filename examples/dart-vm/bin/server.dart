@@ -35,7 +35,7 @@ void main(List<String> args) async {
 
   if (quit) {
     // exit immediately for server launch timing test if --quit option set
-    print('time elapsed: ${watch.elapsedMilliseconds}');
+    print('time elapsed: ${watch.elapsedMilliseconds} ms');
     exit(0);
   }
 }

@@ -25,5 +25,5 @@ check "unable to build image"
 docker run -d -p 8080:8080 --name "$ctr" "$image"
 check "unable to start a test container from image: $image"
 
-dart test
+dart test -r expanded
 

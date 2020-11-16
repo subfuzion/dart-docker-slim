@@ -1,4 +1,4 @@
-## subfuzion/dart:slim
+# subfuzion/dart:slim
 
 The image includes
 * Core system runtime dependencies added to the
@@ -102,6 +102,82 @@ COPY --from=0 /app/bin/server.dill /app/bin/server.dill
 EXPOSE 8080
 ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dill"]
 ```
+
+## Testing
+
+### Image test
+
+```shell
+$ cd test
+$ ./dartslim_test.sh
+[+] Building 9.7s (15/15) FINISHED
+
+00:00 +0: test/image_test.dart: Is server reachable? ping-test
+00:00 +1: test/image_test.dart: Server DNS client tests remote-ping-test
+00:00 +2: All tests passed!
+```
+
+### Timing tests
+
+```shell
+$ time docker pull subfuzion/dart:slim
+slim: Pulling from subfuzion/dart
+Digest: sha256:5bf1b8083f40b83c437301da991dbca8901ae48c525f56ccda05669040b93e1a
+Status: Downloaded newer image for subfuzion/dart:slim
+docker.io/subfuzion/dart:slim
+
+real    0m1.656s
+user    0m0.156s
+sys     0m0.082s
+
+$ docker image ls subfuzion/dart:slim
+REPOSITORY       TAG       IMAGE ID       CREATED        SIZE
+subfuzion/dart   slim      d92db830c85b   12 hours ago   4.09MB
+```
+
+```shell
+$ cd ./examples/dart-aot
+$ docker build -t server-aot .
+[+] Building 11.5s (15/15) FINISHED
+
+$ time docker run -it -p 8080:8080 --name server-aot-test server-aot --quit
+Starting server
+Serving at http://0.0.0.0:8080
+time elapsed: 1 ms
+
+real    0m0.643s
+user    0m0.152s
+sys     0m0.071s
+```
+
+```shell
+$ cd ./examples/dart-vm
+$ docker build -t server-vm .
+[+] Building 4.0s (16/16) FINISHED
+
+$ time docker run -it -p 8080:8080 --name server-vm-test server-vm --quit
+Starting server
+Serving at http://0.0.0.0:8080
+time elapsed: 91 ms
+
+real    0m0.777s
+user    0m0.144s
+sys     0m0.070s
+```
+
+#### Test summary
+
+| Compiler | Build image | Container launch until server listening | main() until server listening |
+|----------|-------------|-----------------------------------------|-------------------------------|
+| AOT      | 11.5s       | 0.643s                                  | 1ms                           |
+| JIT      | 4.0s        | 0.777s                                  | 91ms                          |
+
+Test machine for timing tests
+
+* iMac Pro (2017), 3.2 GHz 8-core Intel Xeon W, 64 GB 2666 MHz DDR4
+* Docker engine 20.10.0-beta1
+* Dart SDK version: 2.10.4 (stable) on "linux_x64"
+
 
 ---
 This is not an official Google project.
