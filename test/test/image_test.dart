@@ -27,9 +27,17 @@ void main() {
     });
   });
 
-  group('Server DNS client tests', () {
+  group('Server - DNS client tests', () {
     test('remote-ping-test', () async {
       var url = serverUrl.replace(path: '/remote-ping-test');
+      var resp = await http.read(url);
+      expect(resp, equals('ok'));
+    });
+  });
+
+  group('Server - TLS client cert tests', () {
+    test('client-certs-test', () async {
+      var url = serverUrl.replace(path: '/client-certs-test');
       var resp = await http.read(url);
       expect(resp, equals('ok'));
     });
