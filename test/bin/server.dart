@@ -38,6 +38,20 @@ void main(List<String> args) async {
     return shelf.Response.ok('ok');
   });
 
+  app.get('/client-certs-test', (shelf.Request req) async {
+    const url = 'https://dart.dev';
+    try {
+      var resp = await http.read(url);
+      if (resp.startsWith('<!DOCTYPE html>')) {
+        return shelf.Response.ok('ok');
+      } else {
+        return shelf.Response.internalServerError(body: resp);
+      }
+    } catch (e) {
+      return shelf.Response.internalServerError(body: e.toString());
+    }
+  });
+
   var server = await io.serve(app.handler, host, port);
   print('Serving at http://${server.address.host}:${server.port}');
 }

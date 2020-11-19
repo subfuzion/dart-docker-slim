@@ -1,4 +1,4 @@
-FROM google/dart AS dart
+FROM google/dart:2.12.0-33.0.dev AS dart
 
 FROM scratch
 # Absolute minimum
