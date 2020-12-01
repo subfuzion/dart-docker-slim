@@ -1,7 +1,7 @@
-name: server
-description: Dart Functions Framework
+name: server_aot
+description: Shelf server in a slim Docker image
 version: 1.0.0
-homepage: https://github.com/subfuzion/dart-scratch
+homepage: https://github.com/subfuzion/dart-docker-slim
 publish_to: none
 
 environment:

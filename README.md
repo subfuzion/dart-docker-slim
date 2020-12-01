@@ -83,6 +83,20 @@ support.
 A minimal server app image will be close to 50 MB although it should be 
 ready in sub-second time to be ready to listen on a socket. 
 
+You may also need to copy one or more system *.dill libraries for your app
+to run. You can list available files that can be copied from the base
+`google/dart` image by running this docker command:
+
+```shell
+docker run --rm google/dart ls -la /usr/lib/dart/lib/_internal
+```
+
+For example, dev tool support requires `dartdev.dill`.
+
+If you can't determine the specific file(s) that you need, then copy the entire 
+`/usr/lib/dart/lib/_internal` directory, as shown in a comment below (this will
+add around ~70MB to your image, however).
+
 ```dockerfile
 FROM google/dart
 # uncomment the following if you want to ensure latest Dart and root CA bundle
@@ -96,8 +110,15 @@ RUN dart compile kernel -o bin/server.dill bin/server.dart
 
 FROM subfuzion/dart:slim
 COPY --from=0 /usr/lib/dart/bin/dart /usr/lib/dart/bin/dart
+# You may also need to copy one or more system *.dill libraries
+# You can list them by running this docker command:
+# docker run --rm google/dart ls -la /usr/lib/dart/lib/_internal
+# For example, dev tool support requires dartdev.dill
+# If you can't determine the specific file(s) that you need, then
+# copy the entire directory (this will add around ~70MB to your image!)
+#COPY --from=0 /usr/lib/dart/lib/_internal/*.dill /usr/lib/dart/lib/_internal/
 COPY --from=0 /app/bin/server.dill /app/bin/server.dill
-# COPY any other directories or files you may require at runtime, ex:
+# Copy any other directories or files you may require at runtime, ex:
 #COPY --from=0 /app/static/ /app/static/
 EXPOSE 8080
 ENTRYPOINT ["/usr/lib/dart/bin/dart", "/app/bin/server.dill"]
@@ -136,7 +157,7 @@ subfuzion/dart   slim      d92db830c85b   12 hours ago   4.09MB
 ```
 
 ```shell
-$ cd ./examples/dart-aot
+$ cd ./examples/dart-aot-shelf-server
 $ docker build -t server-aot .
 [+] Building 11.5s (15/15) FINISHED
 
@@ -151,7 +172,7 @@ sys     0m0.071s
 ```
 
 ```shell
-$ cd ./examples/dart-vm
+$ cd ./examples/dart-vm-shelf-server
 $ docker build -t server-vm .
 [+] Building 4.0s (16/16) FINISHED
 

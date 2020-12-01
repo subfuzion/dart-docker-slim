@@ -1,5 +1,5 @@
 #!/bin/bash
-# Created with package:mono_repo v3.1.0-beta.2-dev
+# Created with package:mono_repo v3.2.0
 
 # Support built in commands on windows out of the box.
 function pub() {
@@ -65,10 +65,6 @@ for PKG in ${PKGS}; do
       dartfmt)
         echo 'dartfmt -n --set-exit-if-changed .'
         dartfmt -n --set-exit-if-changed . || EXIT_CODE=$?
-        ;;
-      test)
-        echo 'pub run test'
-        pub run test || EXIT_CODE=$?
         ;;
       *)
         echo -e "\033[31mUnknown TASK '${TASK}' - TERMINATING JOB\033[0m"
