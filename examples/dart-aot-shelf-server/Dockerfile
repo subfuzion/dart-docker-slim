@@ -10,4 +10,3 @@ FROM subfuzion/dart:slim
 COPY --from=0 /app/bin/server /app/bin/server
 EXPOSE 8080
 ENTRYPOINT ["/app/bin/server"]
-CMD []
