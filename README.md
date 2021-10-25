@@ -1,3 +1,16 @@
+# ARCHIVED
+
+I'm pleased to announced that the work that I did with this prototype evolved into our official image. This repo is now archived.
+
+Here's the official repo:
+https://github.com/dart-lang/dart-docker/
+
+Here's the official image on Docker Hub:
+https://hub.docker.com/_/dart
+
+Tony
+
+
 # subfuzion/dart:slim
 
 The image includes
